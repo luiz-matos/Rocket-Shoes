@@ -57,3 +57,10 @@ export const ProductList = styled.ul`
     }
   }
 `
+
+export const Message = styled.p`
+  color: #ffffff;
+  font-size: 16px;
+  text-align: center;
+  margin-top: 50px;
+`

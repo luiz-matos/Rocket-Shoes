@@ -5,20 +5,25 @@ import { MdAddShoppingCart } from 'react-icons/md'
 
 import api from '../../services/api'
 import { formatPrice } from '../../util/format'
-import { ProductList } from './styles'
+import { ProductList, Message } from './styles'
 import * as CartActions from '../../store/modules/cart/actions'
 class Home extends Component {
   state = {
     products: [],
+    error: false,
   }
 
   async componentDidMount() {
-    const response = await api.get('/products')
-    const data = response.data.map(product => ({
-      ...product,
-      priceFormatted: formatPrice(product.price),
-    }))
-    this.setState({ products: data })
+    try {
+      const response = await api.get('/products')
+      const data = response.data.map(product => ({
+        ...product,
+        priceFormatted: formatPrice(product.price),
+      }))
+      this.setState({ products: data })
+    } catch {
+      this.setState({ error: true })
+    }
   }
 
   handleAddProduct = id => {
@@ -27,8 +32,16 @@ class Home extends Component {
   }
 
   render() {
-    const { products } = this.state
+    const { products, error } = this.state
     const { amount } = this.props
+
+    if (error) {
+      return (
+        <Message>
+          Não foi possível carregar os produtos. Tente novamente mais tarde.
+        </Message>
+      )
+    }
 
     return (
       <ProductList>
