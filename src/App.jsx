@@ -9,7 +9,6 @@ import GlobalStyle from './styles/global'
 import store from './store'
 
 function App() {
-  console.log(GlobalStyle)
   return (
     <Provider store={store}>
       <BrowserRouter>
