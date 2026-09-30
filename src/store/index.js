@@ -3,6 +3,7 @@ import createSagaMiddleware from 'redux-saga'
 
 import rootReducer from './modules/rootReducer'
 import rootSaga from './modules/rootSaga'
+import { loadCart, saveCart } from './cartStorage'
 
 const sagaMiddleware = createSagaMiddleware()
 
@@ -13,7 +14,9 @@ const devTools =
 
 const enhancer = compose(applyMiddleware(sagaMiddleware), devTools)
 
-const store = createStore(rootReducer, enhancer)
+const store = createStore(rootReducer, { cart: loadCart() }, enhancer)
+
+store.subscribe(() => saveCart(store.getState().cart))
 
 sagaMiddleware.run(rootSaga)
 
