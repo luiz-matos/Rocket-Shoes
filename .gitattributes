@@ -1,0 +1,4 @@
+# Texto sempre com LF, no repositório e no disco, em qualquer sistema.
+# Sem isto o Git avisa da troca por CRLF a cada commit no Windows.
+* text=auto eol=lf
+*.ico binary
