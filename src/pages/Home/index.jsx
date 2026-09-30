@@ -10,6 +10,7 @@ import * as CartActions from '../../store/modules/cart/actions'
 class Home extends Component {
   state = {
     products: [],
+    loading: true,
     error: false,
   }
 
@@ -23,6 +24,8 @@ class Home extends Component {
       this.setState({ products: data })
     } catch {
       this.setState({ error: true })
+    } finally {
+      this.setState({ loading: false })
     }
   }
 
@@ -32,8 +35,12 @@ class Home extends Component {
   }
 
   render() {
-    const { products, error } = this.state
+    const { products, loading, error } = this.state
     const { amount } = this.props
+
+    if (loading) {
+      return <Message>Carregando produtos...</Message>
+    }
 
     if (error) {
       return (

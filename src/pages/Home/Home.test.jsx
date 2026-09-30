@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitForElementToBeRemoved } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 
@@ -27,6 +27,15 @@ describe('vitrine', () => {
 
     expect(await screen.findByText('Tênis')).toBeInTheDocument()
     expect(screen.getByText('R$ 179,90')).toBeInTheDocument()
+  })
+
+  it('mostra o carregamento até os produtos chegarem', async () => {
+    api.get.mockResolvedValueOnce({ data: [] })
+
+    renderHome()
+
+    expect(screen.getByText('Carregando produtos...')).toBeInTheDocument()
+    await waitForElementToBeRemoved(() => screen.queryByText('Carregando produtos...'))
   })
 
   it('avisa quando a API não responde', async () => {
