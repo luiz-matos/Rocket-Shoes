@@ -2,14 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
-import { createStore } from 'redux'
 
-import rootReducer from '../../store/modules/rootReducer'
+import { createAppStore } from '../../store/createAppStore'
 import Header from '.'
 
 function renderHeader(cart) {
   return render(
-    <Provider store={createStore(rootReducer, { cart })}>
+    <Provider store={createAppStore(cart)}>
       <MemoryRouter>
         <Header />
       </MemoryRouter>

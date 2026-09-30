@@ -1,11 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { applyMiddleware, createStore } from 'redux'
-import createSagaMiddleware from 'redux-saga'
 import { toast } from 'react-toastify'
 
 import api from '../../../services/api'
-import rootReducer from '../rootReducer'
-import rootSaga from '../rootSaga'
+import { createAppStore } from '../../createAppStore'
 import { addToCartRequest, updateAmountRequest } from './actions'
 
 vi.mock('../../../services/api', () => ({ default: { get: vi.fn() } }))
@@ -30,17 +27,6 @@ function respondAfter(ms) {
   })
 }
 
-function createCartStore(initialCart = []) {
-  const sagaMiddleware = createSagaMiddleware()
-  const store = createStore(
-    rootReducer,
-    { cart: initialCart },
-    applyMiddleware(sagaMiddleware)
-  )
-  sagaMiddleware.run(rootSaga)
-  return store
-}
-
 const amounts = store =>
   store.getState().cart.map(({ id, amount }) => [id, amount])
 
@@ -51,7 +37,7 @@ beforeEach(() => {
 
 describe('pedidos do carrinho feitos em seguida', () => {
   it('adiciona os dois produtos quando o segundo é clicado antes da resposta do primeiro', async () => {
-    const store = createCartStore()
+    const store = createAppStore()
 
     store.dispatch(addToCartRequest(1))
     store.dispatch(addToCartRequest(2))
@@ -65,7 +51,7 @@ describe('pedidos do carrinho feitos em seguida', () => {
   })
 
   it('conta os dois cliques rápidos no mesmo produto', async () => {
-    const store = createCartStore()
+    const store = createAppStore()
 
     store.dispatch(addToCartRequest(1))
     store.dispatch(addToCartRequest(1))
@@ -74,7 +60,7 @@ describe('pedidos do carrinho feitos em seguida', () => {
   })
 
   it('altera a quantidade dos dois produtos quando o segundo é alterado antes da resposta do primeiro', async () => {
-    const store = createCartStore([
+    const store = createAppStore([
       { ...products[1], amount: 1 },
       { ...products[2], amount: 1 },
     ])
@@ -93,7 +79,7 @@ describe('pedidos do carrinho feitos em seguida', () => {
 
 describe('falha de rede', () => {
   it('avisa o erro e continua atendendo os pedidos seguintes', async () => {
-    const store = createCartStore()
+    const store = createAppStore()
     api.get.mockRejectedValueOnce(new Error('Network Error'))
 
     store.dispatch(addToCartRequest(1))

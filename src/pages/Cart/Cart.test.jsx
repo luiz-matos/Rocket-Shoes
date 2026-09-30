@@ -3,15 +3,14 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { createStore } from 'redux'
 
-import rootReducer from '../../store/modules/rootReducer'
+import { createAppStore } from '../../store/createAppStore'
 import Cart from '.'
 
 vi.mock('react-toastify', () => ({ toast: { success: vi.fn() } }))
 
 function renderCart(cart) {
-  const store = createStore(rootReducer, { cart })
+  const store = createAppStore(cart)
   render(
     <Provider store={store}>
       <MemoryRouter initialEntries={['/cart']}>

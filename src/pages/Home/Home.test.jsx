@@ -5,17 +5,16 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react'
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
 
 import api from '../../services/api'
-import rootReducer from '../../store/modules/rootReducer'
+import { createAppStore } from '../../store/createAppStore'
 import Home from '.'
 
 vi.mock('../../services/api', () => ({ default: { get: vi.fn() } }))
 
 function renderHome() {
   return render(
-    <Provider store={createStore(rootReducer)}>
+    <Provider store={createAppStore()}>
       <Home />
     </Provider>
   )
