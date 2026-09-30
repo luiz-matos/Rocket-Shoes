@@ -56,7 +56,9 @@ describe('carrinho', () => {
     renderCart([])
 
     expect(screen.getByText('Seu carrinho está vazio')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Ver os produtos' })).toHaveAttribute('href', '/')
+    expect(
+      screen.getByRole('link', { name: 'Ver os produtos' })
+    ).toHaveAttribute('href', '/')
     expect(screen.queryByText('Finalizar pedido')).not.toBeInTheDocument()
   })
 })

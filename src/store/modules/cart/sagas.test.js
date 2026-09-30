@@ -21,18 +21,28 @@ function respondAfter(ms) {
   api.get.mockImplementation(async url => {
     await new Promise(resolve => setTimeout(resolve, ms))
     const [, resource, id] = url.split('/')
-    return { data: resource === 'stock' ? { id: Number(id), amount: stock[id] } : products[id] }
+    return {
+      data:
+        resource === 'stock'
+          ? { id: Number(id), amount: stock[id] }
+          : products[id],
+    }
   })
 }
 
 function createCartStore(initialCart = []) {
   const sagaMiddleware = createSagaMiddleware()
-  const store = createStore(rootReducer, { cart: initialCart }, applyMiddleware(sagaMiddleware))
+  const store = createStore(
+    rootReducer,
+    { cart: initialCart },
+    applyMiddleware(sagaMiddleware)
+  )
   sagaMiddleware.run(rootSaga)
   return store
 }
 
-const amounts = store => store.getState().cart.map(({ id, amount }) => [id, amount])
+const amounts = store =>
+  store.getState().cart.map(({ id, amount }) => [id, amount])
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -46,7 +56,12 @@ describe('pedidos do carrinho feitos em seguida', () => {
     store.dispatch(addToCartRequest(1))
     store.dispatch(addToCartRequest(2))
 
-    await vi.waitFor(() => expect(amounts(store)).toEqual([[1, 1], [2, 1]]))
+    await vi.waitFor(() =>
+      expect(amounts(store)).toEqual([
+        [1, 1],
+        [2, 1],
+      ])
+    )
   })
 
   it('conta os dois cliques rápidos no mesmo produto', async () => {
@@ -67,7 +82,12 @@ describe('pedidos do carrinho feitos em seguida', () => {
     store.dispatch(updateAmountRequest(1, 2))
     store.dispatch(updateAmountRequest(2, 2))
 
-    await vi.waitFor(() => expect(amounts(store)).toEqual([[1, 2], [2, 2]]))
+    await vi.waitFor(() =>
+      expect(amounts(store)).toEqual([
+        [1, 2],
+        [2, 2],
+      ])
+    )
   })
 })
 

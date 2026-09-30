@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen, waitForElementToBeRemoved } from '@testing-library/react'
+import {
+  render,
+  screen,
+  waitForElementToBeRemoved,
+} from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 
@@ -35,7 +39,9 @@ describe('vitrine', () => {
     renderHome()
 
     expect(screen.getByText('Carregando produtos...')).toBeInTheDocument()
-    await waitForElementToBeRemoved(() => screen.queryByText('Carregando produtos...'))
+    await waitForElementToBeRemoved(() =>
+      screen.queryByText('Carregando produtos...')
+    )
   })
 
   it('avisa quando a API não responde', async () => {
@@ -44,7 +50,9 @@ describe('vitrine', () => {
     renderHome()
 
     expect(
-      await screen.findByText('Não foi possível carregar os produtos. Tente novamente mais tarde.')
+      await screen.findByText(
+        'Não foi possível carregar os produtos. Tente novamente mais tarde.'
+      )
     ).toBeInTheDocument()
   })
 })
