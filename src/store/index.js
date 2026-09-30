@@ -6,13 +6,12 @@ import rootSaga from './modules/rootSaga'
 
 const sagaMiddleware = createSagaMiddleware()
 
-const devTools = window.__REDUX_DEVTOOLS_EXTENSION__
-  ? window.__REDUX_DEVTOOLS_EXTENSION__()
-  : f => f
+const devTools =
+  import.meta.env.DEV && window.__REDUX_DEVTOOLS_EXTENSION__
+    ? window.__REDUX_DEVTOOLS_EXTENSION__()
+    : f => f
 
-const enhancer = import.meta.env.DEV
-  ? compose(applyMiddleware(sagaMiddleware), devTools)
-  : null
+const enhancer = compose(applyMiddleware(sagaMiddleware), devTools)
 
 const store = createStore(rootReducer, enhancer)
 
