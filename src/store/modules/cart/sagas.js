@@ -52,7 +52,11 @@ function* watchCartRequests() {
   const channel = yield actionChannel(Object.keys(handlers))
   while (true) {
     const action = yield take(channel)
-    yield call(handlers[action.type], action)
+    try {
+      yield call(handlers[action.type], action)
+    } catch {
+      toast.error('Não foi possível atualizar o carrinho. Tente novamente.')
+    }
   }
 }
 
