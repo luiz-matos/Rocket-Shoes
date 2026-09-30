@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+import { checkoutSuccess } from '../order/actions'
+
 function findIndex(cart, id) {
   return cart.findIndex(product => product.id === id)
 }
@@ -26,8 +28,8 @@ const cart = createSlice({
       const index = findIndex(state, id)
       if (index >= 0 && state[index].amount > 1) state[index].amount -= 1
     },
-    checkout: () => [],
   },
+  extraReducers: builder => builder.addCase(checkoutSuccess, () => []),
 })
 
 export const cartActions = cart.actions

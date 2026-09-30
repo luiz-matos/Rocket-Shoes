@@ -22,3 +22,6 @@
 npm-debug.log
 yarn-debug.log
 yarn-error.log
+
+# banco da API fake, recriado a partir do server.json a cada yarn server
+/db.json

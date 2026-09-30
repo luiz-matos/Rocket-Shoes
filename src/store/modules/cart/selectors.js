@@ -18,8 +18,8 @@ export const selectCartItems = createSelector(selectCart, cart =>
   }))
 )
 
-export const selectCartTotal = createSelector(selectCart, cart =>
-  formatPrice(
-    cart.reduce((total, product) => total + product.price * product.amount, 0)
-  )
+export const selectCartTotalValue = createSelector(selectCart, cart =>
+  cart.reduce((total, product) => total + product.price * product.amount, 0)
 )
+
+export const selectCartTotal = createSelector(selectCartTotalValue, formatPrice)

@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { toast } from 'react-toastify'
 
 import api from '../../services/api'
 import { createAppStore } from '../../store/createAppStore'
@@ -11,7 +10,9 @@ import Cart from '.'
 vi.mock('react-toastify', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }))
-vi.mock('../../services/api', () => ({ default: { get: vi.fn() } }))
+vi.mock('../../services/api', () => ({
+  default: { get: vi.fn(), post: vi.fn(), patch: vi.fn() },
+}))
 
 // Estoque de 10 unidades, respondendo depois de 10 ms.
 api.get.mockImplementation(
@@ -53,14 +54,25 @@ describe('carrinho', () => {
     expect(screen.getAllByText('R$ 359,80')).toHaveLength(2)
   })
 
-  it('finaliza o pedido, esvazia o carrinho e volta para a vitrine', () => {
+  it('grava o pedido e mostra a confirmação com o número', async () => {
+    api.post.mockResolvedValueOnce({ data: { id: 7 } })
     const store = renderCart([product])
 
-    fireEvent.click(screen.getByRole('button', { name: 'Finalizar pedido' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Finalizar pedido' }), {
+      detail: 1,
+    })
 
+    expect(
+      screen.getByRole('button', { name: 'Enviando pedido...' })
+    ).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Aumentar' })).toBeDisabled()
+    expect(
+      await screen.findByText('Pedido nº 7 finalizado!')
+    ).toBeInTheDocument()
     expect(store.getState().cart).toEqual([])
-    expect(toast.success).toHaveBeenCalledWith('Pedido finalizado!')
-    expect(screen.getByText('Vitrine')).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Voltar à vitrine' })
+    ).toHaveAttribute('href', '/')
   })
 
   describe('botões de quantidade', () => {

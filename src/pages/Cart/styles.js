@@ -28,6 +28,10 @@ export const Container = styled.div`
       &:hover {
         background-color: ${colors.primaryHover};
       }
+      &:disabled {
+        opacity: 0.7;
+        cursor: wait;
+      }
     }
   }
 `
@@ -71,6 +75,10 @@ export const ProductTable = styled.table`
     background: none;
     border: 0;
     padding: 6px;
+    &:disabled {
+      opacity: 0.4;
+      cursor: wait;
+    }
   }
   @media (max-width: 600px) {
     th:first-child,

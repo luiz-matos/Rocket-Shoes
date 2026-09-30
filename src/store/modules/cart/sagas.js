@@ -7,10 +7,21 @@ import {
   addToCartSuccess,
   updateAmountSuccess,
 } from './actions'
+import { selectCartTotalValue } from './selectors'
+import {
+  checkoutFailure,
+  checkoutRequest,
+  checkoutSuccess,
+} from '../order/actions'
+
+function* fetchStock(id) {
+  const { data: stock } = yield call(api.get, `/stock/${id}`)
+  return stock.amount
+}
 
 function* hasStock(id, amount) {
-  const { data: stock } = yield call(api.get, `/stock/${id}`)
-  if (amount > stock.amount) {
+  const stock = yield call(fetchStock, id)
+  if (amount > stock) {
     toast.error('Quantidade solicitada fora de estoque.')
     return false
   }
@@ -31,8 +42,57 @@ function* addToCart({ payload: id }) {
   }
 }
 
+function* placeOrder(cart) {
+  const stocks = []
+  for (const product of cart) {
+    const stock = yield call(fetchStock, product.id)
+    if (product.amount > stock) {
+      toast.error(`Sem estoque suficiente de ${product.title}.`)
+      return null
+    }
+    stocks.push(stock)
+  }
+
+  const { data: order } = yield call(api.post, '/orders', {
+    items: cart.map(({ id, title, price, amount }) => ({
+      id,
+      title,
+      price,
+      amount,
+    })),
+    total: yield select(selectCartTotalValue),
+    createdAt: new Date().toISOString(),
+  })
+
+  for (const [index, product] of cart.entries()) {
+    yield call(api.patch, `/stock/${product.id}`, {
+      amount: stocks[index] - product.amount,
+    })
+  }
+
+  return order.id
+}
+
+function* checkout() {
+  const cart = yield select(state => state.cart)
+  try {
+    const orderId = cart.length > 0 ? yield call(placeOrder, cart) : null
+    yield put(orderId ? checkoutSuccess(orderId) : checkoutFailure())
+  } catch (error) {
+    yield put(checkoutFailure())
+    throw error
+  }
+}
+
 const handlers = {
-  [addToCartRequest.type]: addToCart,
+  [addToCartRequest.type]: {
+    saga: addToCart,
+    errorMessage: 'Não foi possível atualizar o carrinho. Tente novamente.',
+  },
+  [checkoutRequest.type]: {
+    saga: checkout,
+    errorMessage: 'Não foi possível finalizar o pedido. Tente novamente.',
+  },
 }
 
 // Fila: cada pedido espera o anterior terminar, para nenhum clique ser
@@ -41,10 +101,11 @@ function* watchCartRequests() {
   const channel = yield actionChannel(Object.keys(handlers))
   while (true) {
     const action = yield take(channel)
+    const { saga, errorMessage } = handlers[action.type]
     try {
-      yield call(handlers[action.type], action)
+      yield call(saga, action)
     } catch {
-      toast.error('Não foi possível atualizar o carrinho. Tente novamente.')
+      toast.error(errorMessage)
     }
   }
 }

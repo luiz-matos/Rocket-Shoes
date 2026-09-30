@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
+import { Link } from 'react-router-dom'
 
 import {
   MdRemoveCircleOutline,
@@ -9,7 +8,6 @@ import {
 } from 'react-icons/md'
 
 import {
-  checkout,
   addToCartRequest,
   decrementAmount,
   removeFromCart,
@@ -18,6 +16,8 @@ import {
   selectCartItems,
   selectCartTotal,
 } from '../../store/modules/cart/selectors'
+import { checkoutRequest } from '../../store/modules/order/actions'
+import { selectOrder } from '../../store/modules/order/selectors'
 import { Container, EmptyCart, ProductTable, Total } from './styles'
 import { colors } from '../../styles/colors'
 import { singleClick } from '../../util/singleClick'
@@ -25,8 +25,8 @@ import { singleClick } from '../../util/singleClick'
 function Cart() {
   const cart = useSelector(selectCartItems)
   const total = useSelector(selectCartTotal)
+  const { sending, lastOrderId } = useSelector(selectOrder)
   const dispatch = useDispatch()
-  const navigate = useNavigate()
 
   function increment(product) {
     dispatch(addToCartRequest(product.id))
@@ -35,9 +35,18 @@ function Cart() {
     dispatch(decrementAmount(product.id))
   }
   function finishOrder() {
-    dispatch(checkout())
-    toast.success('Pedido finalizado!')
-    navigate('/')
+    dispatch(checkoutRequest())
+  }
+
+  if (cart.length === 0 && lastOrderId) {
+    return (
+      <Container>
+        <EmptyCart>
+          <strong>Pedido nº {lastOrderId} finalizado!</strong>
+          <Link to="/">Voltar à vitrine</Link>
+        </EmptyCart>
+      </Container>
+    )
   }
 
   if (cart.length === 0) {
@@ -78,6 +87,7 @@ function Cart() {
                   <button
                     type="button"
                     aria-label="Diminuir"
+                    disabled={sending}
                     onClick={singleClick(() => decrement(product))}
                   >
                     <MdRemoveCircleOutline size={20} color={colors.primary} />
@@ -86,6 +96,7 @@ function Cart() {
                   <button
                     type="button"
                     aria-label="Aumentar"
+                    disabled={sending}
                     onClick={singleClick(() => increment(product))}
                   >
                     <MdAddCircleOutline size={20} color={colors.primary} />
@@ -99,6 +110,7 @@ function Cart() {
                 <button
                   type="button"
                   aria-label="Remover"
+                  disabled={sending}
                   onClick={() => dispatch(removeFromCart(product.id))}
                 >
                   <MdDelete size={20} color={colors.primary} />
@@ -109,8 +121,12 @@ function Cart() {
         </tbody>
       </ProductTable>
       <footer>
-        <button type="button" onClick={finishOrder}>
-          Finalizar pedido
+        <button
+          type="button"
+          disabled={sending}
+          onClick={singleClick(finishOrder)}
+        >
+          {sending ? 'Enviando pedido...' : 'Finalizar pedido'}
         </button>
         <Total>
           <span>TOTAL</span>

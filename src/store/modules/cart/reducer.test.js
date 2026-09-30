@@ -3,11 +3,11 @@ import { describe, expect, it } from 'vitest'
 import cart from './reducer'
 import {
   addToCartSuccess,
-  checkout,
   decrementAmount,
   removeFromCart,
   updateAmountSuccess,
 } from './actions'
+import { checkoutSuccess } from '../order/actions'
 
 const product = { id: 1, title: 'Tênis', price: 100, amount: 1 }
 
@@ -34,7 +34,7 @@ describe('reducer do carrinho', () => {
   })
 
   it('esvazia o carrinho ao finalizar o pedido', () => {
-    expect(cart([product], checkout())).toEqual([])
+    expect(cart([product], checkoutSuccess(7))).toEqual([])
   })
 
   it('ignora id que não está no carrinho', () => {

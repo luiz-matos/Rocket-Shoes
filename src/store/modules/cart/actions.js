@@ -7,7 +7,6 @@ export const {
   removeFromCart,
   updateAmountSuccess,
   decrementAmount,
-  checkout,
 } = cartActions
 
 // Pedido atendido pelos sagas: consulta o estoque antes de somar 1 unidade.
