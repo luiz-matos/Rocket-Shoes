@@ -1,6 +1,4 @@
-import React from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
@@ -10,7 +8,11 @@ import {
   MdDelete,
 } from 'react-icons/md'
 
-import * as CartActions from '../../store/modules/cart/actions'
+import {
+  checkout,
+  removeFromCart,
+  updateAmountRequest,
+} from '../../store/modules/cart/actions'
 import {
   selectCartItems,
   selectCartTotal,
@@ -18,17 +20,20 @@ import {
 import { Container, EmptyCart, ProductTable, Total } from './styles'
 import { colors } from '../../styles/colors'
 
-function Cart({ cart, total, removeFromCart, updateAmountRequest, checkout }) {
+function Cart() {
+  const cart = useSelector(selectCartItems)
+  const total = useSelector(selectCartTotal)
+  const dispatch = useDispatch()
   const navigate = useNavigate()
 
   function increment(product) {
-    updateAmountRequest(product.id, product.amount + 1)
+    dispatch(updateAmountRequest(product.id, product.amount + 1))
   }
   function decrement(product) {
-    updateAmountRequest(product.id, product.amount - 1)
+    dispatch(updateAmountRequest(product.id, product.amount - 1))
   }
   function finishOrder() {
-    checkout()
+    dispatch(checkout())
     toast.success('Pedido finalizado!')
     navigate('/')
   }
@@ -83,7 +88,7 @@ function Cart({ cart, total, removeFromCart, updateAmountRequest, checkout }) {
               <td>
                 <button
                   type="button"
-                  onClick={() => removeFromCart(product.id)}
+                  onClick={() => dispatch(removeFromCart(product.id))}
                 >
                   <MdDelete size={20} color={colors.primary} />
                 </button>
@@ -104,9 +109,5 @@ function Cart({ cart, total, removeFromCart, updateAmountRequest, checkout }) {
     </Container>
   )
 }
-const mapStateToProps = state => ({
-  cart: selectCartItems(state),
-  total: selectCartTotal(state),
-})
-const mapDispatchToProps = dispatch => bindActionCreators(CartActions, dispatch)
-export default connect(mapStateToProps, mapDispatchToProps)(Cart)
+
+export default Cart
