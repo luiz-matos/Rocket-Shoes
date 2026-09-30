@@ -4,6 +4,7 @@ import cart from './reducer'
 import {
   addToCartSuccess,
   checkout,
+  decrementAmount,
   removeFromCart,
   updateAmountSuccess,
 } from './actions'
@@ -23,6 +24,13 @@ describe('reducer do carrinho', () => {
     expect(cart([product], updateAmountSuccess(1, 3))).toEqual([
       { ...product, amount: 3 },
     ])
+  })
+
+  it('diminui a quantidade sem passar de 1', () => {
+    const two = { ...product, amount: 2 }
+
+    expect(cart([two], decrementAmount(1))).toEqual([product])
+    expect(cart([product], decrementAmount(1))).toEqual([product])
   })
 
   it('esvazia o carrinho ao finalizar o pedido', () => {

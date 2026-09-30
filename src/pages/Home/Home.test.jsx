@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import {
+  fireEvent,
   render,
   screen,
   waitForElementToBeRemoved,
@@ -41,6 +42,29 @@ describe('vitrine', () => {
     await waitForElementToBeRemoved(() =>
       screen.queryByText('Carregando produtos...')
     )
+  })
+
+  it('conta o duplo clique em Adicionar como um clique só', async () => {
+    api.get.mockImplementation(async url => {
+      if (url === '/products')
+        return { data: [{ id: 1, title: 'Tênis', price: 100, image: 'a.jpg' }] }
+      if (url.startsWith('/stock')) return { data: { id: 1, amount: 5 } }
+      return { data: { id: 1, title: 'Tênis', price: 100, image: 'a.jpg' } }
+    })
+    const store = createAppStore()
+    render(
+      <Provider store={store}>
+        <Home />
+      </Provider>
+    )
+    const add = await screen.findByRole('button', { name: /Adicionar/ })
+
+    fireEvent.click(add, { detail: 1 })
+    fireEvent.click(add, { detail: 2 })
+
+    await vi.waitFor(() => expect(store.getState().cart).toHaveLength(1))
+    await new Promise(resolve => setTimeout(resolve, 50))
+    expect(store.getState().cart[0].amount).toBe(1)
   })
 
   it('avisa quando a API não responde', async () => {

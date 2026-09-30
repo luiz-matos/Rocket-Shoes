@@ -5,7 +5,6 @@ import api from '../../../services/api'
 import {
   addToCartRequest,
   addToCartSuccess,
-  updateAmountRequest,
   updateAmountSuccess,
 } from './actions'
 
@@ -32,15 +31,8 @@ function* addToCart({ payload: id }) {
   }
 }
 
-function* updateAmount({ payload: { id, amount } }) {
-  if (amount <= 0) return
-  if (!(yield call(hasStock, id, amount))) return
-  yield put(updateAmountSuccess(id, amount))
-}
-
 const handlers = {
   [addToCartRequest.type]: addToCart,
-  [updateAmountRequest.type]: updateAmount,
 }
 
 // Fila: cada pedido espera o anterior terminar, para nenhum clique ser

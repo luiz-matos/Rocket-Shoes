@@ -4,6 +4,7 @@ import { MdAddShoppingCart } from 'react-icons/md'
 
 import api from '../../services/api'
 import { formatPrice } from '../../util/format'
+import { singleClick } from '../../util/singleClick'
 import { ProductList, Message } from './styles'
 import { addToCartRequest } from '../../store/modules/cart/actions'
 import { selectAmountById } from '../../store/modules/cart/selectors'
@@ -49,7 +50,7 @@ function Home() {
           <span>{formatPrice(product.price)}</span>
           <button
             type="button"
-            onClick={() => dispatch(addToCartRequest(product.id))}
+            onClick={singleClick(() => dispatch(addToCartRequest(product.id)))}
           >
             <div>
               <MdAddShoppingCart size={16} color="#ffffff" />{' '}

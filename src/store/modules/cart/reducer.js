@@ -22,6 +22,10 @@ const cart = createSlice({
         if (index >= 0) state[index].amount = Number(amount)
       },
     },
+    decrementAmount(state, { payload: id }) {
+      const index = findIndex(state, id)
+      if (index >= 0 && state[index].amount > 1) state[index].amount -= 1
+    },
     checkout: () => [],
   },
 })

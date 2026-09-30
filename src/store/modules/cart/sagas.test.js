@@ -3,7 +3,7 @@ import { toast } from 'react-toastify'
 
 import api from '../../../services/api'
 import { createAppStore } from '../../createAppStore'
-import { addToCartRequest, updateAmountRequest } from './actions'
+import { addToCartRequest } from './actions'
 
 vi.mock('../../../services/api', () => ({ default: { get: vi.fn() } }))
 vi.mock('react-toastify', () => ({ toast: { error: vi.fn() } }))
@@ -50,30 +50,13 @@ describe('pedidos do carrinho feitos em seguida', () => {
     )
   })
 
-  it('conta os dois cliques rápidos no mesmo produto', async () => {
+  it('atende os dois pedidos do mesmo produto feitos antes da primeira resposta', async () => {
     const store = createAppStore()
 
     store.dispatch(addToCartRequest(1))
     store.dispatch(addToCartRequest(1))
 
     await vi.waitFor(() => expect(amounts(store)).toEqual([[1, 2]]))
-  })
-
-  it('altera a quantidade dos dois produtos quando o segundo é alterado antes da resposta do primeiro', async () => {
-    const store = createAppStore([
-      { ...products[1], amount: 1 },
-      { ...products[2], amount: 1 },
-    ])
-
-    store.dispatch(updateAmountRequest(1, 2))
-    store.dispatch(updateAmountRequest(2, 2))
-
-    await vi.waitFor(() =>
-      expect(amounts(store)).toEqual([
-        [1, 2],
-        [2, 2],
-      ])
-    )
   })
 })
 

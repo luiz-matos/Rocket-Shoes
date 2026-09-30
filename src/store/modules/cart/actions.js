@@ -6,13 +6,9 @@ export const {
   addToCartSuccess,
   removeFromCart,
   updateAmountSuccess,
+  decrementAmount,
   checkout,
 } = cartActions
 
-// Pedidos atendidos pelos sagas: consultam o estoque antes de mudar o carrinho.
+// Pedido atendido pelos sagas: consulta o estoque antes de somar 1 unidade.
 export const addToCartRequest = createAction('cart/addToCartRequest')
-
-export const updateAmountRequest = createAction(
-  'cart/updateAmountRequest',
-  (id, amount) => ({ payload: { id, amount } })
-)

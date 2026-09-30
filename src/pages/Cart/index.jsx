@@ -10,8 +10,9 @@ import {
 
 import {
   checkout,
+  addToCartRequest,
+  decrementAmount,
   removeFromCart,
-  updateAmountRequest,
 } from '../../store/modules/cart/actions'
 import {
   selectCartItems,
@@ -19,6 +20,7 @@ import {
 } from '../../store/modules/cart/selectors'
 import { Container, EmptyCart, ProductTable, Total } from './styles'
 import { colors } from '../../styles/colors'
+import { singleClick } from '../../util/singleClick'
 
 function Cart() {
   const cart = useSelector(selectCartItems)
@@ -27,10 +29,10 @@ function Cart() {
   const navigate = useNavigate()
 
   function increment(product) {
-    dispatch(updateAmountRequest(product.id, product.amount + 1))
+    dispatch(addToCartRequest(product.id))
   }
   function decrement(product) {
-    dispatch(updateAmountRequest(product.id, product.amount - 1))
+    dispatch(decrementAmount(product.id))
   }
   function finishOrder() {
     dispatch(checkout())
@@ -73,11 +75,19 @@ function Cart() {
               </td>
               <td>
                 <div>
-                  <button type="button" onClick={() => decrement(product)}>
+                  <button
+                    type="button"
+                    aria-label="Diminuir"
+                    onClick={singleClick(() => decrement(product))}
+                  >
                     <MdRemoveCircleOutline size={20} color={colors.primary} />
                   </button>
                   <input type="number" readOnly value={product.amount} />
-                  <button type="button" onClick={() => increment(product)}>
+                  <button
+                    type="button"
+                    aria-label="Aumentar"
+                    onClick={singleClick(() => increment(product))}
+                  >
                     <MdAddCircleOutline size={20} color={colors.primary} />
                   </button>
                 </div>
@@ -88,6 +98,7 @@ function Cart() {
               <td>
                 <button
                   type="button"
+                  aria-label="Remover"
                   onClick={() => dispatch(removeFromCart(product.id))}
                 >
                   <MdDelete size={20} color={colors.primary} />
