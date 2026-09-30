@@ -1,7 +1,8 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 import {
   MdRemoveCircleOutline,
@@ -13,12 +14,19 @@ import * as CartActions from '../../store/modules/cart/actions'
 import { Container, EmptyCart, ProductTable, Total } from './styles'
 import { formatPrice } from '../../util/format'
 
-function Cart({ cart, total, removeFromCart, updateAmountRequest }) {
+function Cart({ cart, total, removeFromCart, updateAmountRequest, checkout }) {
+  const navigate = useNavigate()
+
   function increment(product) {
     updateAmountRequest(product.id, product.amount + 1)
   }
   function decrement(product) {
     updateAmountRequest(product.id, product.amount - 1)
+  }
+  function finishOrder() {
+    checkout()
+    toast.success('Pedido finalizado!')
+    navigate('/')
   }
 
   if (cart.length === 0) {
@@ -81,7 +89,9 @@ function Cart({ cart, total, removeFromCart, updateAmountRequest }) {
         </tbody>
       </ProductTable>
       <footer>
-        <button type="button">Finalizar pedido</button>
+        <button type="button" onClick={finishOrder}>
+          Finalizar pedido
+        </button>
         <Total>
           <span>TOTAL</span>
           <strong>{total}</strong>

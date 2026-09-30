@@ -1,18 +1,24 @@
-import { describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { Provider } from 'react-redux'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { createStore } from 'redux'
 
 import rootReducer from '../../store/modules/rootReducer'
 import Cart from '.'
 
+vi.mock('react-toastify', () => ({ toast: { success: vi.fn() } }))
+
 function renderCart(cart) {
   const store = createStore(rootReducer, { cart })
   render(
     <Provider store={store}>
-      <MemoryRouter>
-        <Cart />
+      <MemoryRouter initialEntries={['/cart']}>
+        <Routes>
+          <Route path="/" element={<p>Vitrine</p>} />
+          <Route path="/cart" element={<Cart />} />
+        </Routes>
       </MemoryRouter>
     </Provider>
   )
@@ -34,6 +40,16 @@ describe('carrinho', () => {
 
     expect(screen.getByText('Tênis')).toBeInTheDocument()
     expect(screen.getAllByText('R$ 359,80')).toHaveLength(2)
+  })
+
+  it('finaliza o pedido, esvazia o carrinho e volta para a vitrine', () => {
+    const store = renderCart([product])
+
+    fireEvent.click(screen.getByRole('button', { name: 'Finalizar pedido' }))
+
+    expect(store.getState().cart).toEqual([])
+    expect(toast.success).toHaveBeenCalledWith('Pedido finalizado!')
+    expect(screen.getByText('Vitrine')).toBeInTheDocument()
   })
 
   it('avisa quando está vazio e leva de volta à vitrine', () => {

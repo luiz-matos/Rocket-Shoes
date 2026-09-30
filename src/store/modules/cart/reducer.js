@@ -21,6 +21,8 @@ function cart(state = [], action) {
         }
       })
     }
+    case '@cart/CHECKOUT':
+      return []
     default:
       return state
   }
