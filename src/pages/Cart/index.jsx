@@ -13,6 +13,7 @@ import {
 import * as CartActions from '../../store/modules/cart/actions'
 import { Container, EmptyCart, ProductTable, Total } from './styles'
 import { formatPrice } from '../../util/format'
+import { colors } from '../../styles/colors'
 
 function Cart({ cart, total, removeFromCart, updateAmountRequest, checkout }) {
   const navigate = useNavigate()
@@ -65,11 +66,11 @@ function Cart({ cart, total, removeFromCart, updateAmountRequest, checkout }) {
               <td>
                 <div>
                   <button type="button" onClick={() => decrement(product)}>
-                    <MdRemoveCircleOutline size={20} color="#5aaeb8" />
+                    <MdRemoveCircleOutline size={20} color={colors.primary} />
                   </button>
                   <input type="number" readOnly value={product.amount} />
                   <button type="button" onClick={() => increment(product)}>
-                    <MdAddCircleOutline size={20} color="#5aaeb8" />
+                    <MdAddCircleOutline size={20} color={colors.primary} />
                   </button>
                 </div>
               </td>
@@ -81,7 +82,7 @@ function Cart({ cart, total, removeFromCart, updateAmountRequest, checkout }) {
                   type="button"
                   onClick={() => removeFromCart(product.id)}
                 >
-                  <MdDelete size={20} color="#5aaeb8" />
+                  <MdDelete size={20} color={colors.primary} />
                 </button>
               </td>
             </tr>

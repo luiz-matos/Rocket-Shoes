@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { darken } from 'polished'
+import { colors } from '../../styles/colors'
 
 export const Container = styled.div`
   padding: 30px;
@@ -17,7 +17,7 @@ export const Container = styled.div`
       gap: 20px;
     }
     button {
-      background-color: #5aaeb8;
+      background-color: ${colors.primary};
       color: #ffffff;
       border: 0;
       border-radius: 4px;
@@ -26,7 +26,7 @@ export const Container = styled.div`
       text-transform: uppercase;
       transition: background-color 0.2s;
       &:hover {
-        background-color: ${darken(0.03, '#5aaeb8')};
+        background-color: ${colors.primaryHover};
       }
     }
   }
@@ -114,11 +114,11 @@ export const EmptyCart = styled.div`
   }
   a {
     margin-top: 15px;
-    color: #5aaeb8;
+    color: ${colors.primary};
     font-weight: bold;
     text-decoration: none;
     &:hover {
-      color: ${darken(0.1, '#5aaeb8')};
+      color: ${colors.primaryDark};
     }
   }
 `

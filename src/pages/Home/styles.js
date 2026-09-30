@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { darken } from 'polished'
+import { colors } from '../../styles/colors'
 
 export const ProductList = styled.ul`
   display: grid;
@@ -28,7 +28,7 @@ export const ProductList = styled.ul`
       margin: 5px 0 20px;
     }
     button {
-      background-color: #5aaeb8;
+      background-color: ${colors.primary};
       color: #ffffff;
       border: 0;
       border-radius: 4px;
@@ -38,7 +38,7 @@ export const ProductList = styled.ul`
       align-items: center;
       transition: background-color 0.2s;
       &:hover {
-        background-color: ${darken(0.03, '#5aaeb8')};
+        background-color: ${colors.primaryHover};
       }
       div {
         display: flex;
