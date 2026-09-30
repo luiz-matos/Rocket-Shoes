@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "server": "json-server server.json --port 3333",
+    "server": "json-server server.json --host 127.0.0.1 --port 3333",
     "build": "eslint . && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
