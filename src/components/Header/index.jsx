@@ -5,6 +5,7 @@ import { MdShoppingBasket } from 'react-icons/md'
 
 import { Container, Cart } from './styles'
 import logo from '../../assets/images/header.svg'
+import { selectCartSize } from '../../store/modules/cart/selectors'
 
 function Header({ cartSize }) {
   return (
@@ -26,7 +27,7 @@ function Header({ cartSize }) {
 }
 
 const mapStateToProps = state => ({
-  cartSize: state.cart.length,
+  cartSize: selectCartSize(state),
 })
 
 export default connect(mapStateToProps)(Header)

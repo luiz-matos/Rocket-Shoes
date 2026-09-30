@@ -8,7 +8,6 @@ import {
   updateAmountRequest,
   updateAmountSuccess,
 } from './actions'
-import { formatPrice } from '../../../util/format'
 
 function* hasStock(id, amount) {
   const { data: stock } = yield call(api.get, `/stock/${id}`)
@@ -29,13 +28,7 @@ function* addToCart({ payload: id }) {
     yield put(updateAmountSuccess(id, amount))
   } else {
     const { data: product } = yield call(api.get, `/products/${id}`)
-    yield put(
-      addToCartSuccess({
-        ...product,
-        amount,
-        priceFormatted: formatPrice(product.price),
-      })
-    )
+    yield put(addToCartSuccess({ ...product, amount }))
   }
 }
 

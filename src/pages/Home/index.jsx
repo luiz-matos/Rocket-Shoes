@@ -7,6 +7,7 @@ import api from '../../services/api'
 import { formatPrice } from '../../util/format'
 import { ProductList, Message } from './styles'
 import * as CartActions from '../../store/modules/cart/actions'
+import { selectAmountById } from '../../store/modules/cart/selectors'
 class Home extends Component {
   state = {
     products: [],
@@ -75,10 +76,7 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => ({
-  amount: state.cart.reduce((amount, product) => {
-    amount[product.id] = product.amount
-    return amount
-  }, {}),
+  amount: selectAmountById(state),
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators(CartActions, dispatch)

@@ -11,8 +11,11 @@ import {
 } from 'react-icons/md'
 
 import * as CartActions from '../../store/modules/cart/actions'
+import {
+  selectCartItems,
+  selectCartTotal,
+} from '../../store/modules/cart/selectors'
 import { Container, EmptyCart, ProductTable, Total } from './styles'
-import { formatPrice } from '../../util/format'
 import { colors } from '../../styles/colors'
 
 function Cart({ cart, total, removeFromCart, updateAmountRequest, checkout }) {
@@ -102,15 +105,8 @@ function Cart({ cart, total, removeFromCart, updateAmountRequest, checkout }) {
   )
 }
 const mapStateToProps = state => ({
-  cart: state.cart.map(product => ({
-    ...product,
-    subtotal: formatPrice(product.price * product.amount),
-  })),
-  total: formatPrice(
-    state.cart.reduce((total, product) => {
-      return total + product.price * product.amount
-    }, 0)
-  ),
+  cart: selectCartItems(state),
+  total: selectCartTotal(state),
 })
 const mapDispatchToProps = dispatch => bindActionCreators(CartActions, dispatch)
 export default connect(mapStateToProps, mapDispatchToProps)(Cart)
