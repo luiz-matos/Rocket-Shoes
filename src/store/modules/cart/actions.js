@@ -1,26 +1,18 @@
-export function addToCartRequest(id) {
-  return { type: '@cart/ADD_REQUEST', id }
-}
-export function addToCartSuccess(product) {
-  return { type: '@cart/ADD_SUCCESS', product }
-}
-export function removeFromCart(id) {
-  return { type: '@cart/REMOVE', id }
-}
-export function updateAmountRequest(id, amount) {
-  return {
-    type: '@cart/UPDATE_AMOUNT_REQUEST',
-    id,
-    amount,
-  }
-}
-export function updateAmountSuccess(id, amount) {
-  return {
-    type: '@cart/UPDATE_AMOUNT_SUCCESS',
-    id,
-    amount,
-  }
-}
-export function checkout() {
-  return { type: '@cart/CHECKOUT' }
-}
+import { createAction } from '@reduxjs/toolkit'
+
+import { cartActions } from './reducer'
+
+export const {
+  addToCartSuccess,
+  removeFromCart,
+  updateAmountSuccess,
+  checkout,
+} = cartActions
+
+// Pedidos atendidos pelos sagas: consultam o estoque antes de mudar o carrinho.
+export const addToCartRequest = createAction('cart/addToCartRequest')
+
+export const updateAmountRequest = createAction(
+  'cart/updateAmountRequest',
+  (id, amount) => ({ payload: { id, amount } })
+)

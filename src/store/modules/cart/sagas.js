@@ -2,7 +2,12 @@ import { actionChannel, call, select, put, take } from 'redux-saga/effects'
 import { toast } from 'react-toastify'
 
 import api from '../../../services/api'
-import { addToCartSuccess, updateAmountSuccess } from './actions'
+import {
+  addToCartRequest,
+  addToCartSuccess,
+  updateAmountRequest,
+  updateAmountSuccess,
+} from './actions'
 import { formatPrice } from '../../../util/format'
 
 function* hasStock(id, amount) {
@@ -14,7 +19,7 @@ function* hasStock(id, amount) {
   return true
 }
 
-function* addToCart({ id }) {
+function* addToCart({ payload: id }) {
   const productInCart = yield select(state => state.cart.find(p => p.id === id))
   const amount = (productInCart?.amount ?? 0) + 1
 
@@ -34,15 +39,15 @@ function* addToCart({ id }) {
   }
 }
 
-function* updateAmount({ id, amount }) {
+function* updateAmount({ payload: { id, amount } }) {
   if (amount <= 0) return
   if (!(yield call(hasStock, id, amount))) return
   yield put(updateAmountSuccess(id, amount))
 }
 
 const handlers = {
-  '@cart/ADD_REQUEST': addToCart,
-  '@cart/UPDATE_AMOUNT_REQUEST': updateAmount,
+  [addToCartRequest.type]: addToCart,
+  [updateAmountRequest.type]: updateAmount,
 }
 
 // Fila: cada pedido espera o anterior terminar, para nenhum clique ser
