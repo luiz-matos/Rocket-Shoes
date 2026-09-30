@@ -5,11 +5,23 @@ export const Container = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 15px;
   margin: 40px 0;
+  img {
+    display: block;
+    max-width: 100%;
+  }
+  @media (max-width: 600px) {
+    margin: 20px 0;
+    > a:first-child {
+      width: 160px;
+    }
+  }
 `
 export const Cart = styled(Link)`
   display: flex;
   align-items: center;
+  flex-shrink: 0;
   text-decoration: none;
   transition: opacity 0.2s;
   &:hover {

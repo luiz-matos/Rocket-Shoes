@@ -5,10 +5,17 @@ export const Container = styled.div`
   padding: 30px;
   background-color: #ffffff;
   border-radius: 4px;
+  @media (max-width: 600px) {
+    padding: 15px;
+  }
   footer {
     margin-top: 30px;
     display: flex;
     justify-content: space-between;
+    @media (max-width: 600px) {
+      flex-direction: column-reverse;
+      gap: 20px;
+    }
     button {
       background-color: #5aaeb8;
       color: #ffffff;
@@ -64,6 +71,22 @@ export const ProductTable = styled.table`
     background: none;
     border: 0;
     padding: 6px;
+  }
+  @media (max-width: 600px) {
+    th:first-child,
+    td:first-child {
+      display: none;
+    }
+    thead th,
+    tbody td {
+      padding: 12px 4px;
+    }
+    div input {
+      width: 40px;
+    }
+    button {
+      padding: 2px;
+    }
   }
 `
 
