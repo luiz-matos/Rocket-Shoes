@@ -1,4 +1,4 @@
-import produce from 'immer'
+import { produce } from 'immer'
 function cart(state = [], action) {
   switch (action.type) {
     case '@cart/ADD_SUCCESS':
