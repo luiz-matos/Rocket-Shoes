@@ -1,6 +1,7 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 import {
   MdRemoveCircleOutline,
@@ -9,7 +10,7 @@ import {
 } from 'react-icons/md'
 
 import * as CartActions from '../../store/modules/cart/actions'
-import { Container, ProductTable, Total } from './styles'
+import { Container, EmptyCart, ProductTable, Total } from './styles'
 import { formatPrice } from '../../util/format'
 
 function Cart({ cart, total, removeFromCart, updateAmountRequest }) {
@@ -19,6 +20,18 @@ function Cart({ cart, total, removeFromCart, updateAmountRequest }) {
   function decrement(product) {
     updateAmountRequest(product.id, product.amount - 1)
   }
+
+  if (cart.length === 0) {
+    return (
+      <Container>
+        <EmptyCart>
+          <strong>Seu carrinho está vazio</strong>
+          <Link to="/">Ver os produtos</Link>
+        </EmptyCart>
+      </Container>
+    )
+  }
+
   return (
     <Container>
       <ProductTable>

@@ -79,3 +79,23 @@ export const Total = styled.div`
     margin-left: 5px;
   }
 `
+
+export const EmptyCart = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 0;
+  strong {
+    font-size: 18px;
+    color: #333333;
+  }
+  a {
+    margin-top: 15px;
+    color: #5aaeb8;
+    font-weight: bold;
+    text-decoration: none;
+    &:hover {
+      color: ${darken(0.1, '#5aaeb8')};
+    }
+  }
+`
