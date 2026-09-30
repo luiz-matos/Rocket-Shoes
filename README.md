@@ -1,68 +1,187 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 👟 Rocket Shoes
 
-## Available Scripts
+<div align="center">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19">
+  <img src="https://img.shields.io/badge/Redux%20Toolkit-2-764ABC?style=for-the-badge&logo=redux&logoColor=white" alt="Redux Toolkit 2">
+  <img src="https://img.shields.io/badge/Redux%20Saga-1.5-999999?style=for-the-badge&logo=reduxsaga&logoColor=white" alt="Redux Saga 1.5">
+  <img src="https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 8">
+  <img src="https://img.shields.io/badge/React%20Router-7-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white" alt="React Router 7">
+  <img src="https://img.shields.io/badge/styled--components-6-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=white" alt="styled-components 6">
+  <img src="https://img.shields.io/badge/Vitest-5-6E9F18?style=for-the-badge&logo=vitest&logoColor=white" alt="Vitest 5">
+  <img src="https://img.shields.io/badge/Licen%C3%A7a-MIT-yellow?style=for-the-badge" alt="Licença MIT">
+</div>
 
-In the project directory, you can run:
+<br>
 
-### `yarn start`
+> 🎯 **Loja de tênis em React com o carrinho na arquitetura Flux**, usando Redux Toolkit para o estado e Redux Saga para consultar o estoque antes de cada mudança no carrinho.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Fiz em 2020 para estudar a arquitetura Flux, e o repositório se chamava Arquitetura-Flux. Em 2026 voltei a ele: troquei o Create React App (descontinuado) pelo Vite, corrigi os bugs, completei a loja com carrinho salvo, carrinho vazio e finalização do pedido, e passei o store para o Redux Toolkit mantendo os sagas.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## 📋 Índice
 
-### `yarn test`
+- [🚀 Como rodar](#-como-rodar)
+- [✨ Recursos](#-recursos)
+- [🧩 Como o código funciona](#-como-o-código-funciona)
+- [🔄 Revisitando o projeto em 2026](#-revisitando-o-projeto-em-2026)
+- [📄 Licença](#-licença)
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🚀 Como rodar
 
-### `yarn build`
+Precisa de Node 22.12 ou mais novo e do Yarn.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+yarn
+```
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+A loja busca produtos e estoque numa API fake, servida pelo json-server a partir do `server.json`. Suba a API num terminal:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+yarn server
+```
 
-### `yarn eject`
+E o app em outro:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```bash
+yarn dev
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Depois abra http://localhost:5173.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+A API sobe em `http://127.0.0.1:3333`. Para usar outro endereço, crie um `.env.local` com `VITE_API_URL` (modelo no `.env.example`).
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Outros comandos:
 
-## Learn More
+| Comando | O que faz |
+|---|---|
+| `yarn test` | Roda os 25 testes (Vitest e Testing Library) |
+| `yarn lint` | Roda o ESLint, que também confere a formatação do Prettier |
+| `yarn format` | Formata o código com o Prettier |
+| `yarn build` | Roda o lint e gera a versão de produção na pasta `dist` |
+| `yarn preview` | Serve a pasta `dist` localmente |
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Com a extensão [Redux DevTools](https://github.com/reduxjs/redux-devtools) instalada no navegador, dá para acompanhar cada action e o estado do carrinho em modo de desenvolvimento.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## ✨ Recursos
 
-### Code Splitting
+- Vitrine com os produtos da API, aviso de carregamento e aviso de erro quando a API não responde
+- Adicionar ao carrinho pela vitrine, com a quantidade de cada produto no botão
+- Alterar a quantidade e remover produtos no carrinho, com subtotal e total
+- Estoque conferido na API antes de cada aumento de quantidade, com aviso quando não há estoque
+- Carrinho salvo no navegador (`localStorage`), que sobrevive ao recarregar a página
+- Aviso de carrinho vazio com link de volta à vitrine
+- Finalizar pedido: esvazia o carrinho, mostra a confirmação e volta para a vitrine
+- Layout para celular: a vitrine vai de 3 colunas para 1, e o carrinho esconde a foto em telas de até 600 px
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+## 🧩 Como o código funciona
 
-### Analyzing the Bundle Size
+```
+index.html                    página base; o Vite injeta o src/main.jsx
+server.json                   produtos e estoque da API fake
+src/
+├── main.jsx                  ponto de entrada: monta o App no #root
+├── App.jsx                   store, rotas, cabeçalho, estilo global e avisos
+├── routes.jsx                / (vitrine) e /cart (carrinho)
+├── services/api.js           axios apontando para VITE_API_URL
+├── util/format.js            formatPrice, em reais
+├── styles/                   estilo global e cores da marca
+├── components/Header/        logo e quantidade de itens no carrinho
+├── pages/
+│   ├── Home/                 vitrine
+│   └── Cart/                 carrinho
+├── store/
+│   ├── index.js              store da aplicação, com o carrinho salvo no navegador
+│   ├── createAppStore.js     configureStore com o middleware do Saga
+│   ├── cartStorage.js        lê e grava o carrinho no localStorage
+│   └── modules/cart/
+│       ├── reducer.js        slice do carrinho (createSlice)
+│       ├── actions.js        actions do slice e pedidos que passam pelo estoque
+│       ├── sagas.js          fila de pedidos e consulta ao estoque
+│       └── selectors.js      quantidade por produto, subtotal e total
+└── test/setup.js             matchers do jest-dom e limpeza entre os testes
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+O fluxo segue a arquitetura Flux: a tela nunca altera o carrinho direto, ela despacha uma action, e o estado só muda no reducer.
 
-### Making a Progressive Web App
+```mermaid
+flowchart LR
+    Tela["Vitrine e carrinho"] -->|"addToCartRequest<br>updateAmountRequest"| Fila["Fila de pedidos<br>(actionChannel)"]
+    Fila --> Saga["Saga consulta<br>/stock na API"]
+    Saga -->|sem estoque| Aviso["Aviso na tela"]
+    Saga -->|"addToCartSuccess<br>updateAmountSuccess"| Reducer["Reducer do carrinho"]
+    Tela -->|"removeFromCart<br>checkout"| Reducer
+    Reducer --> Store[("Store")]
+    Store -->|seletores| Tela
+    Store -->|subscribe| Local[("localStorage")]
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+- **Dois tipos de action.** O que depende do estoque (adicionar e aumentar a quantidade) vira um pedido, tratado pelos sagas. O que não depende (remover e finalizar) vai direto ao reducer.
+- **Sagas (`sagas.js`).** Os pedidos entram numa fila e são atendidos um de cada vez. `hasStock` consulta `/stock/:id` e mostra o aviso quando a quantidade passa do estoque. Produto novo no carrinho busca os dados em `/products/:id`.
+- **Estado mínimo.** O carrinho guarda só os dados do produto e a quantidade. Preço formatado, subtotal e total saem dos seletores em `selectors.js`, com `createSelector`, que só recalcula quando o carrinho muda.
+- **Telas.** Componentes de função com `useSelector` e `useDispatch`. Cada pasta de página tem o `index.jsx` com o componente e o `styles.js` com os componentes do styled-components usados só nela.
 
-### Advanced Configuration
+## 🔄 Revisitando o projeto em 2026
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+O projeto não rodava mais: o `react-scripts 3.4` usa o webpack 4, que calcula hashes com MD4, e o OpenSSL 3 do Node 17 em diante recusa esse algoritmo (`ERR_OSSL_EVP_UNSUPPORTED`). Contornando isso, a revisão achou um build de produção que não abria e um carrinho que perdia cliques.
 
-### Deployment
+### 🐛 Bugs corrigidos
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+| Bug | Causa | Correção |
+|---|---|---|
+| Tela em branco no build de produção | Fora do modo de desenvolvimento o enhancer era `null`, e o `createStore` recebia `null` como estado inicial | O middleware do Saga entra sempre; só o DevTools depende do modo |
+| Clicar num produto e logo em outro deixava só o segundo no carrinho | `takeLatest` valia para todos os produtos e cancelava o pedido anterior | Fila de pedidos com `actionChannel` |
+| Dois cliques rápidos no mesmo produto davam quantidade 1 | Mesma causa | Mesma fila: cada pedido parte do carrinho que o anterior deixou |
+| Depois de uma falha de rede, o carrinho parava de responder | O erro subia até o saga raiz e o encerrava | Erro tratado na fila, com aviso, e a fila continua |
+| Vitrine vazia e sem aviso com a API fora do ar | A busca dos produtos não tinha `catch` | Aviso de erro na vitrine |
+| "1 itens" no cabeçalho | Plural fixo | "1 item" e "2 itens" |
 
-### `yarn build` fails to minify
+Cada correção tem um teste que falhava antes e passa depois.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+### 🧠 Decisões técnicas
+
+**Vite no lugar do Create React App**
+
+O Create React App foi descontinuado. O Vite resolve o build sem mudar a arquitetura: só o ponto de entrada muda (`index.html` na raiz e arquivos com JSX em `.jsx`).
+
+- React 16 para 19, com `createRoot`.
+- React Router 5 para 7: `Routes` e `element` no lugar de `Switch` e `component`.
+- ESLint 10 com configuração flat e Prettier ligado ao lint, no lugar do `eslintConfig` do CRA.
+
+**Redux DevTools no lugar do Reactotron**
+
+O Reactotron depende de um app desktop, e o plugin dele para o Saga está parado na versão que o projeto já usava. A extensão Redux DevTools mostra as actions e o estado no próprio navegador, e o `configureStore` já liga a extensão sozinho.
+
+**Redux Toolkit mantendo o Redux Saga**
+
+O Redux Toolkit é hoje a forma recomendada de escrever Redux: `createSlice` substituiu o reducer com `switch` e as actions escritas à mão, e os tipos deixaram de ser texto repetido em três arquivos. O RTK Query ou o listener do Toolkit poderiam substituir os sagas, mas o projeto existe para estudar o fluxo Flux com efeitos isolados, então os sagas ficaram.
+
+**Fila de pedidos no lugar do `takeLatest`**
+
+O `takeLatest` cancelava o pedido anterior, de qualquer produto. O `takeEvery` também não resolveria: dois cliques no mesmo produto leriam o carrinho vazio ao mesmo tempo e criariam duas linhas do mesmo tênis. Com a fila (`actionChannel`), cada pedido espera o anterior terminar. O custo é que cliques seguidos esperam a resposta do estoque um do outro.
+
+**json-server 0.17**
+
+A linha 1.0 do json-server está em alpha e beta desde dezembro de 2023, então o projeto usa a 0.17.4, a última estável. Por padrão ela escuta em `localhost`, que no Node 24 fica só no IPv6 (`::1`), por isso o script fixa `--host 127.0.0.1`, o mesmo endereço que o app chama.
+
+**Organização do código**
+
+- **Estado sem dado derivado.** O preço formatado era gravado no estado e no `localStorage`, e subtotal e total eram recalculados em cada tela. Agora ficam nos seletores.
+- **Componentes de função com hooks.** A vitrine era classe, e as três telas usavam `connect` com `bindActionCreators`, que entregava todas as actions do carrinho a cada tela. Agora cada uma importa só as actions que usa.
+- **Checagem de estoque num lugar só.** Adicionar e alterar a quantidade repetiam a consulta, a comparação e o aviso. O saga `hasStock` faz os três.
+- **Cor da marca num módulo.** `#5aaeb8` aparecia em 9 lugares; está em `styles/colors.js`, com os tons de hover.
+- **Mesmo store na aplicação e nos testes.** `createAppStore` monta o store com os sagas, e os testes usam a mesma função com o carrinho de que precisam.
+- **Regras que deixei de fora.** Não criei um tipo próprio para dinheiro (o "envolver primitivos" do object calisthenics): o preço vem da API como número, é somado em um único seletor e formatado por `formatPrice`, e um objeto a mais não resolvia nenhum problema deste código. Também não injeto a `api` nos sagas: os testes trocam o módulo pelo dublê do Vitest, e uma camada de injeção só adicionaria código.
+- **Mesmo resultado.** Antes da refatoração gravei o HTML das cinco telas, o estado do store e do `localStorage` depois de uma sequência de cliques, os avisos mostrados e o CSS dos 9 componentes de estilo. A cada passo comparei de novo: ficou idêntico em 7 dos 9, e nos outros 2 só mudou o esperado (o seletor `* body` virou `body` e o estado perdeu o preço formatado). Os 25 testes passaram em todos os passos.
+
+## 📄 Licença
+
+[MIT](LICENSE)
+
+---
+
+<div align="center">
+  <p>Desenvolvido por <strong>Luiz Matos</strong></p>
+  <p>
+    <a href="https://github.com/luiz-matos">GitHub</a> •
+    <a href="https://www.linkedin.com/in/luizeduardomatos/">LinkedIn</a>
+  </p>
+</div>
