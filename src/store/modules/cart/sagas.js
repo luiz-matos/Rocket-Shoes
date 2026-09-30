@@ -1,4 +1,4 @@
-import { call, select, put, all, takeLatest } from 'redux-saga/effects'
+import { actionChannel, call, select, put, take } from 'redux-saga/effects'
 import { toast } from 'react-toastify'
 
 import api from '../../../services/api'
@@ -41,7 +41,19 @@ function* updateAmount({ id, amount }) {
   yield put(updateAmountSuccess(id, amount))
 }
 
-export default all([
-  takeLatest('@cart/ADD_REQUEST', addToCart),
-  takeLatest('@cart/UPDATE_AMOUNT_REQUEST', updateAmount),
-])
+const handlers = {
+  '@cart/ADD_REQUEST': addToCart,
+  '@cart/UPDATE_AMOUNT_REQUEST': updateAmount,
+}
+
+// Fila: cada pedido espera o anterior terminar, para nenhum clique ser
+// cancelado e cada um partir da quantidade que o anterior deixou no carrinho.
+function* watchCartRequests() {
+  const channel = yield actionChannel(Object.keys(handlers))
+  while (true) {
+    const action = yield take(channel)
+    yield call(handlers[action.type], action)
+  }
+}
+
+export default call(watchCartRequests)
